@@ -1,5 +1,5 @@
 import { AuthService } from '@/api/auth';
-import React, { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import TimelyLogo from '@/assets/timely-logo/timely-logo-white.png'
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 export const LoginForm = () => {
     const formRef = useRef<HTMLFormElement>(null);
     const navigate = useNavigate();
-    const [csrfPromise, setCsrfPromise] = useState<Promise<{ csrf_token: string }> | undefined>(undefined);
 
     const {
         control,
@@ -18,40 +17,26 @@ export const LoginForm = () => {
         defaultValues: {
             email: '',
             password: '',
-            csrfmiddlewaretoken: ''
+            csrfmiddlewaretoken: '',
         }
     });
 
     const onSubmit = async (formData: any) => {
         try {
-            const token = await csrfPromise;
-            if (!token?.csrf_token) {
-                console.error("Missing CSRF token");
-                return;
-            }
-
+            // Ensure CSRF cookie exists first
+            const csrf = await AuthService.getCSRF();
             const data = {
                 ...formData,
-                csrfmiddlewaretoken: token.csrf_token,
+                csrfmiddlewaretoken: csrf.data.csrf_token,
             };
-
-            console.log("Submitting with data:", data);
-            const res = await AuthService.login(data);
-            if (res) {
-                navigate("/worklog");
-            }
+            await AuthService.login(data);
+            navigate("/worklog");
         } catch (err) {
-            console.error(err);
+            console.error("LOGIN FAILED", err);
         }
     };
 
 
-    useEffect(() => {
-        if (csrfPromise === undefined) {
-            const promise = AuthService.requestCSRFToken();
-            setCsrfPromise(promise);
-        }
-    }, [csrfPromise]);
 
     return (
         <div className="min-h-screen flex flex-col justify-center items-center bg-white">

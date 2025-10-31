@@ -18,7 +18,7 @@ function createWindow() {
   // if (isDev) {
   //   win.loadURL('http://192.168.1.23:5173/#/login');
   // } else {
-    win.loadFile(path.join(__dirname, '../dist/index.html'));
+  win.loadFile(path.join(__dirname, '../dist/index.html'));
   // }
 }
 

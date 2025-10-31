@@ -1,6 +1,7 @@
 interface LoginPayload {
     email: string;
     password: string;
+    csrfmiddlewaretoken: string;
 }
 
 interface LoginResponse {

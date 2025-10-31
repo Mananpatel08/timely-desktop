@@ -1,30 +1,22 @@
+import { API_BASE_URL } from "@/helpers/common.helper";
 import axios from "axios";
+import Cookies from "js-cookie";
+
 
 const apiClient = axios.create({
-  baseURL: "https://g29c5bg0-8000.inc1.devtunnels.ms",
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: API_BASE_URL,
   withCredentials: true,
+  headers: { "Content-Type": "application/json" }
 });
 
-// Add interceptor for auth token
 apiClient.interceptors.request.use((config) => {
+  const csrf = Cookies.get("csrftoken");
+  if (csrf) config.headers["X-CSRFToken"] = csrf;
+
   const token = localStorage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
+
   return config;
 });
-
-// Handle global errors
-apiClient.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err.response?.status === 401) {
-      console.warn("Unauthorized – maybe token expired");
-      // redirect to login if needed
-    }
-    return Promise.reject(err);
-  }
-);
 
 export default apiClient;
