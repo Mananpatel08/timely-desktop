@@ -1,10 +1,14 @@
 import apiClient from "./client";
-import type { EmailCheckPayload, IEmailCheckResponse, LoginPayload, LoginResponse } from "@/types/auth";
+import type { EmailCheckPayload, IEmailCheckResponse, LoginResponse } from "@/types/auth";
 
 export const AuthService = {
     getCSRF: () => apiClient.get("/auth/get-csrf-token/"),
-    login: async (payload: LoginPayload): Promise<LoginResponse> => {
-        const { data } = await apiClient.post("/auth/sign-in/", payload);
+    login: async (payload: FormData): Promise<LoginResponse> => {
+        const { data } = await apiClient.post("/auth/sign-in/", payload, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         return data;
     },
     emailCheck: async (payload: EmailCheckPayload): Promise<IEmailCheckResponse> => {

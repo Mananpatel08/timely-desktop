@@ -15,26 +15,27 @@ export const LoginForm = () => {
         // formState: { errors },
     } = useForm({
         defaultValues: {
-            email: '',
-            password: '',
+            email: 'patelmanan0755@gmail.com',
+            password: 'Wedoweb@123',
             csrfmiddlewaretoken: '',
         }
     });
 
-    const onSubmit = async (formData: any) => {
+    const onSubmit = async (data: any) => {
         try {
-            // Ensure CSRF cookie exists first
+            const fd = new FormData();
             const csrf = await AuthService.getCSRF();
-            const data = {
-                ...formData,
-                csrfmiddlewaretoken: csrf.data.csrf_token,
-            };
-            await AuthService.login(data);
+            fd.append("csrfmiddlewaretoken", csrf.data.csrf_token);
+            fd.append("email", data.email);
+            fd.append("password", data.password);
+
+            await AuthService.login(fd);
             navigate("/worklog");
         } catch (err) {
             console.error("LOGIN FAILED", err);
         }
     };
+
 
 
 

@@ -1,4 +1,4 @@
-interface LoginPayload {
+export interface LoginPayload {
     email: string;
     password: string;
     csrfmiddlewaretoken: string;
@@ -7,6 +7,7 @@ interface LoginPayload {
 interface LoginResponse {
     token: string;
     user: { id: string; name: string };
+    
 }
 
 export interface ICsrfTokenData {
